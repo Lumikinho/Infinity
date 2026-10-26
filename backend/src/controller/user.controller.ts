@@ -1,4 +1,4 @@
-import usersModel from '../model/userModel'
+import usersModel from '../repository/user.repository'
 import type { Request, Response } from 'express'
 const userController = {
   listar: async (req: Request, res: Response) => {
