@@ -6,6 +6,9 @@ out
 dist
 *.tgz
 
+# prisma generated client (regenerated on install via postinstall)
+src/generated
+
 # code coverage
 coverage
 *.lcov
@@ -33,3 +36,5 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 # Finder (MacOS) folder config
 .DS_Store
 .neon
+
+/src/generated/prisma
