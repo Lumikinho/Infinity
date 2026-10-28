@@ -10,3 +10,5 @@ export interface User {
 }
 
 export type CriarUsuario = Omit<User, 'UUID'>
+
+export type AtualizarUsuario = Partial<CriarUsuario> & Pick<User, 'UUID'>

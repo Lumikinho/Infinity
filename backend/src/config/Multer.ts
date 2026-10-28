@@ -2,7 +2,9 @@ import multer from 'multer'
 import path from 'node:path'
 import crypto from 'node:crypto'
 
-const storage = multer.diskStorage({
+const isProduction = process.env.NODE_ENV === 'production'
+
+const diskStorage = multer.diskStorage({
   destination: './uploads',
 
   filename: (_req, file, callback) => {
@@ -12,6 +14,10 @@ const storage = multer.diskStorage({
     callback(null, nomeArquivo)
   },
 })
+
+// Em produção a imagem fica em memória e é enviada ao Neon Object Storage
+// pelo controller. Em desenvolvimento continua sendo gravada em uploads/.
+const storage = isProduction ? multer.memoryStorage() : diskStorage
 
 const multerConfig = multer({
   storage,
