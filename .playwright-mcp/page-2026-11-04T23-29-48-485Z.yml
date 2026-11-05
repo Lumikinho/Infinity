@@ -1,0 +1,23 @@
+- generic [ref=f1e3]:
+  - banner [ref=f1e4]:
+    - link "Infinity" [ref=f1e156] [cursor=pointer]:
+      - /url: "#/"
+    - navigation "Navegação principal" [ref=f1e157]:
+      - generic [ref=f1e158]:
+        - link "Início" [ref=f1e159] [cursor=pointer]:
+          - /url: "#/"
+        - link "Jogos" [ref=f1e160] [cursor=pointer]:
+          - /url: "#/jogos"
+  - main [ref=f1e14]:
+    - generic [ref=f1e214]:
+      - paragraph [ref=f1e215]: Elenco
+      - heading "Jogadores" [level=1] [ref=f1e217]
+      - paragraph [ref=f1e218]: Todos os jogadores da Infinity, com país, times e perfil completo.
+    - generic [ref=f1e220]:
+      - generic [ref=f1e221]: Buscar jogadores
+      - searchbox "Buscar jogadores" [ref=f1e222]
+    - status [ref=f1e232]: Carregando jogadores
+  - contentinfo [ref=f1e48]:
+    - generic [ref=f1e49]:
+      - paragraph [ref=f1e50]: "Infinity"
+      - paragraph [ref=f1e52]: Jogos, jogadores e campeonatos.
