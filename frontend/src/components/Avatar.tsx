@@ -1,41 +1,52 @@
-import { useState } from 'react'
-import { cn, initials } from '../lib/utils'
+import { useEffect, useState } from 'react'
 
-interface AvatarProps {
-  name: string
-  src?: string | null
-  size?: 'sm' | 'md' | 'lg'
-}
+import { cn, initials } from '../lib/format'
 
 const sizes = {
-  sm: 'size-8 text-[10px]',
+  sm: 'size-8 text-[11px]',
   md: 'size-10 text-xs',
   lg: 'size-16 text-lg',
 }
 
-export function Avatar({ name, src, size = 'md' }: AvatarProps) {
+interface AvatarProps {
+  name: string
+  src: string | null
+  size?: keyof typeof sizes
+  className?: string
+}
+
+export function Avatar({ name, src, size = 'md', className }: AvatarProps) {
   const [failed, setFailed] = useState(false)
-  const showImage = Boolean(src) && !failed
+
+  useEffect(() => {
+    setFailed(false)
+  }, [src])
+
+  if (src && !failed) {
+    return (
+      <img
+        src={src}
+        alt=""
+        onError={() => setFailed(true)}
+        className={cn(
+          'shrink-0 rounded-full border border-line object-cover',
+          sizes[size],
+          className,
+        )}
+      />
+    )
+  }
 
   return (
     <span
       aria-hidden="true"
       className={cn(
-        'relative grid shrink-0 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-neutral-200 to-neutral-100 font-medium text-neutral-600 ring-1 ring-black/5',
+        'grid shrink-0 place-items-center rounded-full border border-line bg-neutral-100 font-medium uppercase tracking-tight text-neutral-600',
         sizes[size],
+        className,
       )}
     >
-      {showImage ? (
-        <img
-          src={src ?? undefined}
-          alt=""
-          loading="lazy"
-          className="size-full object-cover"
-          onError={() => setFailed(true)}
-        />
-      ) : (
-        <span>{initials(name)}</span>
-      )}
+      {initials(name)}
     </span>
   )
 }

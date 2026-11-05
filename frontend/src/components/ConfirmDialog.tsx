@@ -1,73 +1,102 @@
-import { useId, useState } from 'react'
-import { DialogShell } from './DialogShell'
-import { TrashIcon } from './Icons'
-import type { User } from '../types'
+import { useEffect, useId, useRef, useState } from 'react'
+import type { ReactNode } from 'react'
+
+import { Spinner } from './Spinner'
+import { errorBannerClass, primaryButtonClass, secondaryButtonClass } from '../lib/styles'
 
 interface ConfirmDialogProps {
-  user: User
+  title: string
+  description: ReactNode
+  confirmLabel: string
+  errorFallback?: string
   onClose: () => void
   onConfirm: () => Promise<void>
 }
 
-export function ConfirmDialog({ user, onClose, onConfirm }: ConfirmDialogProps) {
+export function ConfirmDialog({
+  title,
+  description,
+  confirmLabel,
+  errorFallback = 'Não foi possível concluir a exclusão.',
+  onClose,
+  onConfirm,
+}: ConfirmDialogProps) {
+  const dialogRef = useRef<HTMLDialogElement>(null)
   const titleId = useId()
-  const [pending, setPending] = useState(false)
+
+  const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  async function handleConfirm() {
-    if (pending) return
+  useEffect(() => {
+    const dialog = dialogRef.current
 
-    setPending(true)
+    if (dialog && !dialog.open) dialog.showModal()
+  }, [])
+
+  async function handleConfirm() {
+    if (submitting) return
+
+    setSubmitting(true)
     setError(null)
 
     try {
       await onConfirm()
       onClose()
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : 'Não foi possível excluir o usuário.')
-      setPending(false)
+      setError(cause instanceof Error ? cause.message : errorFallback)
+      setSubmitting(false)
     }
   }
 
   return (
-    <DialogShell onClose={onClose} closeDisabled={pending} labelledBy={titleId} width="max-w-sm">
-      <div className="p-6">
-        <span className="grid size-11 place-items-center rounded-full bg-rose-50 text-rose-600 ring-1 ring-rose-100">
-          <TrashIcon className="size-5" />
-        </span>
+    <dialog
+      ref={dialogRef}
+      aria-labelledby={titleId}
+      onCancel={(event) => {
+        if (submitting) {
+          event.preventDefault()
+          return
+        }
 
-        <h2 id={titleId} className="mt-5 text-lg font-medium tracking-[-0.02em]">
-          Excluir usuário?
+        onClose()
+      }}
+      onClick={(event) => {
+        if (event.target === dialogRef.current && !submitting) onClose()
+      }}
+      className="m-auto w-[calc(100%-2rem)] max-w-md border border-line bg-surface p-0 text-ink shadow-2xl backdrop:bg-black/70"
+    >
+      <div className="px-5 py-5">
+        <h2 id={titleId} className="text-base font-semibold tracking-tight">
+          {title}
         </h2>
-        <p className="mt-2 text-sm leading-relaxed text-muted">
-          Você está prestes a excluir <span className="font-medium text-ink">{user.name}</span>. Essa
-          ação não pode ser desfeita.
-        </p>
+        <div className="mt-2 text-sm leading-relaxed text-muted">{description}</div>
 
-        {error && <p className="mt-3 text-[13px] text-rose-600">{error}</p>}
-
-        <div className="mt-6 flex justify-end gap-2">
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={pending}
-            className="h-10 rounded-xl px-4 text-sm font-medium text-muted transition hover:bg-ink/5 hover:text-ink disabled:opacity-50"
-          >
-            Cancelar
-          </button>
-          <button
-            type="button"
-            onClick={handleConfirm}
-            disabled={pending}
-            className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-rose-600 px-4 text-sm font-medium text-white transition hover:bg-rose-700 disabled:opacity-70"
-          >
-            {pending && (
-              <span className="size-3.5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-            )}
-            Excluir
-          </button>
-        </div>
+        {error && (
+          <div role="alert" className={`mt-4 ${errorBannerClass}`}>
+            {error}
+          </div>
+        )}
       </div>
-    </DialogShell>
+
+      <div className="flex items-center justify-end gap-2 border-t border-line bg-neutral-50 px-5 py-4">
+        <button
+          type="button"
+          onClick={onClose}
+          disabled={submitting}
+          className={secondaryButtonClass}
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          onClick={() => void handleConfirm()}
+          disabled={submitting}
+          className={primaryButtonClass}
+        >
+          {submitting && <Spinner />}
+          {confirmLabel}
+        </button>
+      </div>
+    </dialog>
   )
 }

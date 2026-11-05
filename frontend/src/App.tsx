@@ -1,179 +1,117 @@
-import { useMemo, useState } from 'react'
-import { AnimatePresence, motion } from 'motion/react'
-import { Header } from './components/Header'
-import { Hero } from './components/Hero'
-import { Toolbar } from './components/Toolbar'
-import { UserList } from './components/UserList'
-import { UserFormModal } from './components/UserFormModal'
-import { ConfirmDialog } from './components/ConfirmDialog'
-import { useToast } from './components/Toast'
-import { useUsers } from './hooks/useUsers'
-import type { RoleFilter, User, UserInput } from './types'
+import { useEffect, useState } from 'react'
 
-type FormState = { mode: 'create' } | { mode: 'edit'; user: User } | null
+import { AppShell } from './components/AppShell'
+import { PublicShell } from './components/PublicShell'
+import { clearSession, readSession, writeSession } from './lib/session'
+import { isPublicScreen, readRoute, routeHash } from './lib/routes'
+import type { AppRoute } from './lib/routes'
+import { ChampionshipsPage } from './pages/ChampionshipsPage'
+import { GamePage } from './pages/GamePage'
+import { GamesPage } from './pages/GamesPage'
+import { HomePage } from './pages/HomePage'
+import { LoginPage } from './pages/LoginPage'
+import { PlayerHomePage } from './pages/PlayerHomePage'
+import { PlayersPage } from './pages/PlayersPage'
+import { PublicGamesPage } from './pages/PublicGamesPage'
+import { PublicPlayerPage } from './pages/PublicPlayerPage'
+import { PublicPlayersPage } from './pages/PublicPlayersPage'
+import { TeamsPage } from './pages/TeamsPage'
+import { UsersPage } from './pages/UsersPage'
+import type { User } from './types'
 
-function normalize(value: string) {
-  return value
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
+function resolveRoute(user: User | null, route: AppRoute): AppRoute {
+  if (route.screen === 'login') {
+    if (!user) return route
+
+    return { screen: user.role === 'PLAYER' ? 'player' : 'users' }
+  }
+
+  if (isPublicScreen(route.screen)) return route
+
+  if (!user) return { screen: 'login' }
+
+  if (user.role === 'PLAYER') {
+    return route.screen === 'player' ? route : { screen: 'player' }
+  }
+
+  if (route.screen === 'player') return { screen: 'users' }
+
+  return route
 }
 
 function App() {
-  const { users, status, error, refreshing, refresh, create, update, remove } = useUsers()
-  const toast = useToast()
+  const [sessionUser, setSessionUser] = useState<User | null>(() => readSession())
+  const [route, setRoute] = useState<AppRoute>(() => readRoute())
 
-  const [query, setQuery] = useState('')
-  const [role, setRole] = useState<RoleFilter>('ALL')
-  const [form, setForm] = useState<FormState>(null)
-  const [deleting, setDeleting] = useState<User | null>(null)
+  useEffect(() => {
+    const handleHashChange = () => setRoute(readRoute())
 
-  const filteredUsers = useMemo(() => {
-    const term = normalize(query.trim())
+    window.addEventListener('hashchange', handleHashChange)
 
-    return users.filter((user) => {
-      const matchesRole = role === 'ALL' || user.role === role
-      const matchesQuery =
-        term.length === 0 ||
-        normalize(user.name).includes(term) ||
-        normalize(user.email).includes(term)
+    return () => window.removeEventListener('hashchange', handleHashChange)
+  }, [])
 
-      return matchesRole && matchesQuery
-    })
-  }, [users, query, role])
+  const current = resolveRoute(sessionUser, route)
 
-  const stats = useMemo(
-    () => ({
-      total: users.length,
-      admins: users.filter((user) => user.role === 'ADMIN').length,
-      players: users.filter((user) => user.role === 'PLAYER').length,
-    }),
-    [users],
-  )
+  useEffect(() => {
+    const expected = routeHash(current.screen, current.id)
 
-  const hasFilters = query.trim().length > 0 || role !== 'ALL'
+    if (window.location.hash !== expected) window.location.hash = expected
+  }, [route, current.screen, current.id])
 
-  async function handleSubmit(input: UserInput) {
-    if (form?.mode === 'edit') {
-      const updated = await update(form.user.UUID, input)
-
-      toast.push({
-        variant: 'success',
-        title: 'Usuário atualizado',
-        description: updated.name,
-      })
-
-      return
-    }
-
-    const created = await create({ ...input, password: input.password ?? '' })
-
-    toast.push({
-      variant: 'success',
-      title: 'Usuário cadastrado',
-      description: created.name,
-    })
+  function handleAuthenticated(user: User) {
+    writeSession(user)
+    setSessionUser(user)
+    setRoute({ screen: user.role === 'PLAYER' ? 'player' : 'users' })
   }
 
-  async function handleDelete() {
-    if (!deleting) return
-
-    await remove(deleting.UUID)
-
-    toast.push({
-      variant: 'success',
-      title: 'Usuário excluído',
-      description: `${deleting.name} foi removido da equipe.`,
-    })
+  function handleLogout() {
+    clearSession()
+    setSessionUser(null)
+    setRoute({ screen: 'home' })
   }
 
-  function clearFilters() {
-    setQuery('')
-    setRole('ALL')
+  function handleSessionUserChange(user: User) {
+    writeSession(user)
+    setSessionUser(user)
   }
+
+  if (current.screen === 'login') {
+    return <LoginPage onAuthenticated={handleAuthenticated} />
+  }
+
+  if (isPublicScreen(current.screen)) {
+    return (
+      <PublicShell current={current.screen} user={sessionUser}>
+        {current.screen === 'home' && <HomePage />}
+        {current.screen === 'games' && <PublicGamesPage />}
+        {current.screen === 'gameDetail' && current.id && (
+          <GamePage identifier={current.id} />
+        )}
+        {current.screen === 'players' && <PublicPlayersPage />}
+        {current.screen === 'playerDetail' && current.id && (
+          <PublicPlayerPage playerId={current.id} />
+        )}
+      </PublicShell>
+    )
+  }
+
+  if (!sessionUser) return null
 
   return (
-    <div className="relative flex min-h-dvh flex-col">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[480px] bg-[radial-gradient(60%_100%_at_50%_0%,rgba(67,56,202,0.09),transparent_72%)]"
-      />
-
-      <Header status={status} />
-
-      <main className="mx-auto w-full max-w-5xl flex-1 px-5 pb-16 sm:px-8">
-        <Hero total={stats.total} admins={stats.admins} players={stats.players} />
-
-        <section aria-labelledby="users-heading" className="mt-14">
-          <h2 id="users-heading" className="sr-only">
-            Usuários
-          </h2>
-
-          <Toolbar
-            query={query}
-            role={role}
-            refreshing={refreshing}
-            onQueryChange={setQuery}
-            onRoleChange={setRole}
-            onRefresh={() => void refresh('refresh')}
-            onNew={() => setForm({ mode: 'create' })}
-          />
-
-          {error && users.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: -4 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mt-4 flex items-start gap-2 rounded-xl border border-amber-200/80 bg-amber-50 px-3 py-2.5 text-[13px] text-amber-800"
-            >
-              <span className="mt-1 size-1.5 shrink-0 rounded-full bg-amber-500" />
-              <p>Não foi possível sincronizar agora. Exibindo a última lista carregada.</p>
-            </motion.div>
-          )}
-
-          <div className="mt-6">
-            <UserList
-              users={filteredUsers}
-              total={users.length}
-              status={status}
-              error={error}
-              hasFilters={hasFilters}
-              onRetry={() => void refresh('initial')}
-              onClearFilters={clearFilters}
-              onNew={() => setForm({ mode: 'create' })}
-              onEdit={(user) => setForm({ mode: 'edit', user })}
-              onDelete={setDeleting}
-            />
-          </div>
-        </section>
-      </main>
-
-      <footer className="border-t border-line">
-        <div className="mx-auto flex w-full max-w-5xl flex-col gap-2 px-5 py-6 text-[10px] font-medium uppercase tracking-[0.16em] text-muted sm:flex-row sm:items-center sm:justify-between sm:px-8">
-          <p>Infinity · {new Date().getFullYear()}</p>
-          <p>React · Vite · Tailwind · Motion</p>
-        </div>
-      </footer>
-
-      <AnimatePresence>
-        {form && (
-          <UserFormModal
-            key="user-form"
-            user={form.mode === 'edit' ? form.user : null}
-            onClose={() => setForm(null)}
-            onSubmit={handleSubmit}
-          />
-        )}
-
-        {deleting && (
-          <ConfirmDialog
-            key="confirm-delete"
-            user={deleting}
-            onClose={() => setDeleting(null)}
-            onConfirm={handleDelete}
-          />
-        )}
-      </AnimatePresence>
-    </div>
+    <AppShell
+      user={sessionUser}
+      current={current.screen}
+      onLogout={handleLogout}
+      onSessionUserChange={handleSessionUserChange}
+    >
+      {current.screen === 'users' && <UsersPage user={sessionUser} />}
+      {current.screen === 'managePlayers' && <PlayersPage />}
+      {current.screen === 'manageTeams' && <TeamsPage />}
+      {current.screen === 'manageGames' && <GamesPage />}
+      {current.screen === 'championships' && <ChampionshipsPage />}
+      {current.screen === 'player' && <PlayerHomePage user={sessionUser} />}
+    </AppShell>
   )
 }
 
