@@ -1,0 +1,19 @@
+- generic [ref=f1e3]:
+  - banner [ref=f1e4]:
+    - generic [ref=f1e5]:
+      - link "Infinity Circuito competitivo" [ref=f1e6] [cursor=pointer]:
+        - /url: "#/"
+        - generic [ref=f1e8]: "Infinity"
+        - generic [ref=f1e9]: Circuito competitivo
+      - navigation "Navegação principal" [ref=f1e10]:
+        - link "Início" [ref=f1e11] [cursor=pointer]:
+          - /url: "#/"
+        - link "Jogos" [ref=f1e12] [cursor=pointer]:
+          - /url: "#/jogos"
+      - generic [ref=f1e13]: Jogos e jogadores
+  - main [ref=f1e14]:
+    - status [ref=f1e100]: Carregando o jogo
+  - contentinfo [ref=f1e48]:
+    - generic [ref=f1e49]:
+      - paragraph [ref=f1e50]: "Infinity"
+      - paragraph [ref=f1e52]: Jogos, jogadores e campeonatos.

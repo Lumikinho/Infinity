@@ -1,5 +1,7 @@
 import type { UserRole } from '../generated/prisma/enums'
 
+export const USER_ROLES = ['USER', 'ADMIN', 'PLAYER'] as const
+
 export interface User {
   UUID: string
   name: string

@@ -11,6 +11,7 @@ const usersModel = {
         profilePic: true,
         role: true,
         createdAt: true,
+        updatedAt: true,
       },
       orderBy: {
         createdAt: 'desc',
@@ -28,6 +29,18 @@ const usersModel = {
         role: true,
         profilePic: true,
         createdAt: true,
+        updatedAt: true,
+      },
+    })
+    return database
+  },
+  buscarPorEmail: async (email: string) => {
+    const database = await prisma.users.findFirst({
+      where: {
+        email: {
+          equals: email,
+          mode: 'insensitive',
+        },
       },
     })
     return database
@@ -38,6 +51,11 @@ const usersModel = {
       select: {
         UUID: true,
         profilePic: true,
+        player: {
+          select: {
+            photo: true,
+          },
+        },
       },
     })
     return database

@@ -2,7 +2,9 @@ import usersModel from '../repository/user.repository'
 import type { Request, Response } from 'express'
 import bcrypt from 'bcrypt'
 import { Prisma } from '../generated/prisma/client'
+import type { UserRole } from '../generated/prisma/enums'
 import type { AtualizarUsuario } from '../types/user.types'
+import { USER_ROLES } from '../types/user.types'
 import {
   deleteProfilePic,
   resolveProfilePicUrl,
@@ -10,6 +12,13 @@ import {
 } from '../storage/storage.service'
 
 const saltRounds = Number(process.env.SALTS ?? 12)
+
+function parseRole(value: unknown): UserRole | null {
+  if (typeof value !== 'string') return null
+  if (!(USER_ROLES as readonly string[]).includes(value)) return null
+
+  return value as UserRole
+}
 
 const userController = {
   listar: async (req: Request, res: Response) => {
@@ -46,7 +55,13 @@ const userController = {
 
     try {
       const { name, email, password }: { name: string; email: string; password: string } = req.body
-      const role = 'USER'
+      const role = parseRole(req.body?.role ?? 'USER')
+
+      if (!role) {
+        return res.status(400).json({
+          message: 'Função inválida',
+        })
+      }
 
       if (!name || name.length <= 3) {
         return res.status(400).json({
@@ -106,8 +121,12 @@ const userController = {
 
     try {
       const { UUID } = req.params
-      const { name, email, password }: { name?: string; email?: string; password?: string } =
-        req.body ?? {}
+      const { name, email, password, role }: {
+        name?: string
+        email?: string
+        password?: string
+        role?: string
+      } = req.body ?? {}
 
       if (!UUID || typeof UUID !== 'string') {
         return res.status(400).json({
@@ -138,10 +157,25 @@ const userController = {
         })
       }
 
+      let funcao: UserRole | undefined
+
+      if (role !== undefined) {
+        const parsed = parseRole(role)
+
+        if (!parsed) {
+          return res.status(400).json({
+            message: 'Função inválida',
+          })
+        }
+
+        funcao = parsed
+      }
+
       const dados: AtualizarUsuario = { UUID }
 
       if (name !== undefined) dados.name = name.trim()
       if (email !== undefined) dados.email = email.trim()
+      if (funcao !== undefined) dados.role = funcao
       if (password !== undefined) dados.password = await bcrypt.hash(password, saltRounds)
       if (req.file) {
         imagemEnviada = await saveProfilePic(req.file)
@@ -209,7 +243,11 @@ const userController = {
       }
 
       await usersModel.remover(UUID)
-      await deleteProfilePic(usuario.profilePic)
+
+      await Promise.all([
+        deleteProfilePic(usuario.profilePic),
+        deleteProfilePic(usuario.player?.photo),
+      ])
 
       return res.status(204).send()
     } catch (error) {
