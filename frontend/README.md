@@ -12,7 +12,7 @@ Painel minimalista de cadastro e gerenciamento de usuários, consumindo a API Ex
 
 ## Como rodar
 
-O backend precisa estar em execução (por padrão em `http://localhost:9000`).
+O backend precisa estar em execução. Por padrão usamos `http://localhost:8089` no desenvolvimento.
 
 ```bash
 npm install
@@ -21,26 +21,38 @@ npm run dev
 
 Abra `http://localhost:5173`.
 
-Em desenvolvimento, o Vite faz proxy de `/api` e `/uploads` para o backend, então não há necessidade de CORS.
+## Configuração da API
 
-Para apontar para outra porta/API, crie um `.env`:
+Copie o `.env.example` para `.env` e ajuste os valores:
 
 ```bash
-VITE_PROXY_TARGET=http://localhost:9000
-# ou, fora do proxy:
-# VITE_API_URL=https://sua-api.exemplo.com
+cp .env.example .env
 ```
 
-> Se usar `VITE_API_URL` direto (sem proxy), habilite CORS no backend.
+```env
+# Desenvolvimento: backend local (o Vite faz proxy de /api e /uploads).
+VITE_API_URL_LOCAL=http://localhost:8089
+
+# Produção: URL pública da API usada no build.
+# Deixe vazio se o frontend e a API estiverem na mesma origem.
+VITE_API_URL_PUBLIC=https://api.seu-dominio.com
+```
+
+- **Local (`npm run dev`)**: o navegador chama `http://localhost:5173/api/...` e o Vite encaminha para `VITE_API_URL_LOCAL`. Não precisa de CORS.
+- **Pública (`npm run build`)**: as requisições usam `VITE_API_URL_PUBLIC`. Se ela ficar vazia, o frontend consome a API na mesma origem (ideal quando o backend serve o `dist`).
+- **Dev contra a API pública**: aponte `VITE_API_URL_LOCAL` para a URL pública; o proxy continua evitando CORS.
+- Os nomes antigos `VITE_PROXY_TARGET` e `VITE_API_URL` ainda funcionam como fallback.
+
+> Ao usar `VITE_API_URL`/`VITE_API_URL_PUBLIC` de forma direta (sem proxy), habilite CORS no backend.
 
 ## Scripts
 
-| Comando           | Descrição                        |
-| ----------------- | -------------------------------- |
-| `npm run dev`     | Ambiente de desenvolvimento      |
-| `npm run build`   | Typecheck + build de produção    |
-| `npm run preview` | Pré-visualiza o build            |
-| `npm run typecheck` | Apenas verificação de tipos    |
+| Comando             | Descrição                     |
+| ------------------- | ----------------------------- |
+| `npm run dev`       | Ambiente de desenvolvimento   |
+| `npm run build`     | Typecheck + build de produção |
+| `npm run preview`   | Pré-visualiza o build         |
+| `npm run typecheck` | Apenas verificação de tipos   |
 
 ## Funcionalidades
 

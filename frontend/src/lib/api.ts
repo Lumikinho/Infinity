@@ -12,8 +12,16 @@ import type {
   UserInput,
 } from '../types'
 
-const rawBase = import.meta.env.VITE_API_URL as string | undefined
-const API_BASE = (rawBase ?? '').replace(/\/+$/, '')
+const env = import.meta.env
+
+// Em desenvolvimento o padrão é passar pelo proxy do Vite (VITE_API_URL_LOCAL).
+// Em produção usamos a URL pública da API (VITE_API_URL_PUBLIC).
+// VITE_API_URL continua aceito como atalho/compatibilidade.
+const rawBase = env.DEV
+  ? (env.VITE_API_URL ?? '')
+  : (env.VITE_API_URL_PUBLIC ?? env.VITE_API_URL ?? '')
+
+const API_BASE = rawBase.replace(/\/+$/, '')
 
 const uploadsBase = `${API_BASE}/uploads`
 
