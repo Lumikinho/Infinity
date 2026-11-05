@@ -1,144 +1,93 @@
-import type { ReactNode, SVGProps } from 'react'
+import type { ReactNode } from 'react'
 
-type IconProps = SVGProps<SVGSVGElement>
+type IconProps = {
+  className?: string
+}
 
-function Icon({ children, ...props }: IconProps & { children: ReactNode }) {
+function Svg({ className, children }: IconProps & { children: ReactNode }) {
   return (
     <svg
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth={1.7}
+      strokeWidth="1.6"
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
-      {...props}
+      className={className}
     >
       {children}
     </svg>
   )
 }
 
-export function SearchIcon(props: IconProps) {
+export function IconCopy({ className }: IconProps) {
   return (
-    <Icon {...props}>
-      <circle cx="11" cy="11" r="7" />
-      <path d="m20 20-3.2-3.2" />
-    </Icon>
+    <Svg className={className}>
+      <rect x="9" y="9" width="11" height="11" rx="1.5" />
+      <path d="M15 5.5A1.5 1.5 0 0 0 13.5 4H5.5A1.5 1.5 0 0 0 4 5.5v8A1.5 1.5 0 0 0 5.5 15" />
+    </Svg>
   )
 }
 
-export function PlusIcon(props: IconProps) {
+export function IconCheck({ className }: IconProps) {
   return (
-    <Icon {...props}>
-      <path d="M12 5v14M5 12h14" />
-    </Icon>
+    <Svg className={className}>
+      <path d="m5 12.5 4.5 4.5L19 7" />
+    </Svg>
   )
 }
 
-export function RefreshIcon(props: IconProps) {
+export function IconPencil({ className }: IconProps) {
   return (
-    <Icon {...props}>
-      <path d="M20 11a8 8 0 1 0-2.34 5.66" />
-      <path d="M20 4v7h-7" />
-    </Icon>
+    <Svg className={className}>
+      <path d="M4 20h4L18.5 9.5a2.1 2.1 0 0 0-3-3L5 17v3Z" />
+      <path d="m13.5 6.5 4 4" />
+    </Svg>
   )
 }
 
-export function PencilIcon(props: IconProps) {
+export function IconTrash({ className }: IconProps) {
   return (
-    <Icon {...props}>
-      <path d="M12 20h9" />
-      <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
-    </Icon>
-  )
-}
-
-export function TrashIcon(props: IconProps) {
-  return (
-    <Icon {...props}>
+    <Svg className={className}>
       <path d="M4 7h16" />
-      <path d="M10 11v6M14 11v6" />
-      <path d="m6 7 1 13a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-13" />
-      <path d="M9 7V4h6v3" />
-    </Icon>
+      <path d="M9 7V5h6v2" />
+      <path d="m6 7 1 13h10l1-13" />
+    </Svg>
   )
 }
 
-export function XIcon(props: IconProps) {
+export function IconX({ className }: IconProps) {
   return (
-    <Icon {...props}>
-      <path d="m18 6-12 12M6 6l12 12" />
-    </Icon>
+    <Svg className={className}>
+      <path d="M6 6l12 12M18 6 6 18" />
+    </Svg>
   )
 }
 
-export function MinusIcon(props: IconProps) {
+export function IconLogout({ className }: IconProps) {
   return (
-    <Icon {...props}>
-      <path d="M5 12h14" />
-    </Icon>
+    <Svg className={className}>
+      <path d="M15 4h3.5A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5H15" />
+      <path d="m10 8-4 4 4 4" />
+      <path d="M6 12h10" />
+    </Svg>
   )
 }
 
-export function ArrowLeftIcon(props: IconProps) {
+export function IconPlus({ className }: IconProps) {
   return (
-    <Icon {...props}>
-      <path d="M19 12H5M12 19l-7-7 7-7" />
-    </Icon>
+    <Svg className={className}>
+      <path d="M12 5v14M5 12h14" />
+    </Svg>
   )
 }
 
-export function ArrowRightIcon(props: IconProps) {
+export function IconRefresh({ className }: IconProps) {
   return (
-    <Icon {...props}>
-      <path d="M5 12h14M12 5l7 7-7 7" />
-    </Icon>
-  )
-}
-
-export function UsersIcon(props: IconProps) {
-  return (
-    <Icon {...props}>
-      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-      <circle cx="9" cy="7" r="4" />
-      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-    </Icon>
-  )
-}
-
-export function CheckIcon(props: IconProps) {
-  return (
-    <Icon {...props}>
-      <path d="m20 6-11 11-5-5" />
-    </Icon>
-  )
-}
-
-export function AlertIcon(props: IconProps) {
-  return (
-    <Icon {...props}>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M12 8v4M12 16h.01" />
-    </Icon>
-  )
-}
-
-export function ImageIcon(props: IconProps) {
-  return (
-    <Icon {...props}>
-      <rect x="3" y="3" width="18" height="18" rx="2" />
-      <circle cx="8.5" cy="8.5" r="1.5" />
-      <path d="m21 15-5-5L5 21" />
-    </Icon>
-  )
-}
-
-export function InfinityIcon(props: IconProps) {
-  return (
-    <Icon {...props}>
-      <path d="M18.5 8.5c2 2 2 5 0 7s-5 2-7 0l-3-3c-2-2-5-2-7 0s-2 5 0 7 5 2 7 0l3-3c2-2 5-2 7 0" />
-    </Icon>
+    <Svg className={className}>
+      <path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3" />
+      <path d="M19.5 4.5V10h-5.5" />
+    </Svg>
   )
 }
