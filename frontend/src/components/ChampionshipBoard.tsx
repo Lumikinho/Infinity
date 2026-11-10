@@ -1,5 +1,5 @@
 import { TeamLogo } from './TeamLogo'
-import { imageUrl } from '../lib/api'
+import { imageUrl } from '../lib/localData'
 import { cn, formatCurrency, formatDate, formatDateTime } from '../lib/format'
 import type { Championship, ChampionshipMatch, MatchStatus, MatchTeam } from '../types'
 

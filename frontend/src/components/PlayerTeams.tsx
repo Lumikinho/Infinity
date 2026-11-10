@@ -1,7 +1,7 @@
 import { useId } from 'react'
 
 import { TeamLogo } from './TeamLogo'
-import { imageUrl } from '../lib/api'
+import { imageUrl } from '../lib/localData'
 import type { PlayerTeam } from '../types'
 
 export type TeamsState = 'loading' | 'ready' | 'error'

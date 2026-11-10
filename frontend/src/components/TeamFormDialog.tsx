@@ -6,7 +6,7 @@ import { Field } from './Field'
 import { IconX } from './Icons'
 import { Spinner } from './Spinner'
 import { TeamLogo } from './TeamLogo'
-import { avatarUrl } from '../lib/api'
+import { avatarUrl } from '../lib/localData'
 import { cn } from '../lib/format'
 import {
   errorBannerClass,

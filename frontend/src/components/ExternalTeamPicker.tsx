@@ -2,8 +2,8 @@ import { useState } from 'react'
 import type { KeyboardEvent } from 'react'
 
 import { Spinner } from './Spinner'
-import { searchExternalTeams } from '../lib/api'
-import type { ExternalTeamSuggestion } from '../lib/api'
+import { searchExternalTeams } from '../lib/localData'
+import type { ExternalTeamSuggestion } from '../lib/localData'
 import { cn } from '../lib/format'
 import { fieldClass, secondaryButtonClass } from '../lib/styles'
 
@@ -150,14 +150,7 @@ export function ExternalTeamPicker({ gameId, value, onChange }: ExternalTeamPick
           Usar “{term || 'nome do time'}” como time externo
         </button>
 
-        <a
-          href="https://liquipedia.net"
-          target="_blank"
-          rel="noreferrer"
-          className="text-[10px] text-muted underline decoration-neutral-300 underline-offset-4 transition hover:text-ink"
-        >
-          Busca via Liquipedia
-        </a>
+        <span className="text-[10px] text-muted">Sugestões locais</span>
       </div>
     </div>
   )

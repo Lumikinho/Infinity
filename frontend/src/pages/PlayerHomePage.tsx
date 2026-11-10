@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { TeamLogo } from '../components/TeamLogo'
-import { imageUrl, listPlayerChampionships } from '../lib/api'
+import { imageUrl, listPlayerChampionships } from '../lib/localData'
 import { formatDate, formatDateTime } from '../lib/format'
 import type { Championship, MatchStatus, User } from '../types'
 

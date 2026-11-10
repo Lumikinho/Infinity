@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 
 import { LoadError } from '../components/LoadError'
 import { PlayerCard } from '../components/PlayerCard'
-import { listPlayers } from '../lib/api'
+import { listPlayers } from '../lib/localData'
 import { fieldClass } from '../lib/styles'
 import type { Player } from '../types'
 

@@ -8,7 +8,7 @@ import { Notice } from './Notice'
 import { PlayerTeams } from './PlayerTeams'
 import type { TeamsState } from './PlayerTeams'
 import { ProfileDialog } from './ProfileDialog'
-import { avatarUrl, deleteUser, findPlayerByUser, updateUser } from '../lib/api'
+import { avatarUrl, deleteUser, findPlayerByUser, updateUser } from '../lib/localData'
 import { cn, roleLabels } from '../lib/format'
 import {
   managementNav,
@@ -102,11 +102,11 @@ export function AppShell({
             className="flex flex-col items-start gap-2.5"
           >
             <AsciiWordmark className="ascii-wordmark-compact" />
-            <span>
+            <div>
               <p className="mt-1 text-[10px] font-medium uppercase tracking-[0.16em] text-muted">
                 {isPlayer ? 'Área do jogador' : 'Painel'}
               </p>
-            </span>
+            </div>
           </a>
         </div>
 
@@ -175,12 +175,12 @@ export function AppShell({
 
       <header className="sticky top-0 z-10 border-b border-line bg-canvas/90 backdrop-blur-xl md:hidden">
         <div className="flex items-center justify-between gap-3 px-4 py-2.5">
-          <p className="flex min-w-0 items-center gap-3">
+          <div className="flex min-w-0 items-center gap-3">
             <AsciiWordmark className="ascii-wordmark-compact shrink-0" />
             <span className="truncate border-l border-line pl-3 font-display text-sm font-semibold uppercase tracking-[0.06em] text-muted">
               {screenLabels[current]}
             </span>
-          </p>
+          </div>
 
           <div className="flex shrink-0 items-center gap-1">
             <button

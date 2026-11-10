@@ -7,6 +7,7 @@ export type AppScreen =
   | 'manageGames'
   | 'championships'
   | 'player'
+  | 'brawlStars'
   | 'games'
   | 'gameDetail'
   | 'players'
@@ -26,6 +27,7 @@ export const screenHashes: Record<AppScreen, string> = {
   manageGames: '#/gerenciar/jogos',
   championships: '#/campeonatos',
   player: '#/jogador',
+  brawlStars: '#/brawl-stars',
   games: '#/jogos',
   gameDetail: '#/jogos',
   players: '#/jogadores',
@@ -41,6 +43,7 @@ export const screenLabels: Record<AppScreen, string> = {
   manageGames: 'Jogos',
   championships: 'Campeonatos',
   player: 'Meu espaço',
+  brawlStars: 'Brawl Stars',
   games: 'Jogos',
   gameDetail: 'Jogo',
   players: 'Jogadores',
@@ -97,9 +100,9 @@ export function readRoute(): AppRoute {
     return id ? { screen: 'playerDetail', id: decodeSegment(id) } : { screen: 'players' }
   }
 
-  // Link antigo do site: leva para a página do jogo correspondente.
+  // Tela dedicada do Brawl Stars.
   if (segment === 'brawl-stars' || segment === 'brawlstars') {
-    return { screen: 'gameDetail', id: 'brawl-stars' }
+    return { screen: 'brawlStars' }
   }
 
   return { screen: screensByHash[segment] ?? 'home' }
@@ -113,6 +116,8 @@ export function routeHash(screen: AppScreen, id?: string) {
 }
 
 export function gameHref(id: string) {
+  if (id === 'brawl-stars') return screenHashes.brawlStars
+
   return `#/jogos/${encodeURIComponent(id)}`
 }
 
@@ -125,6 +130,7 @@ export function isPublicScreen(screen: AppScreen) {
     screen === 'home' ||
     screen === 'games' ||
     screen === 'gameDetail' ||
+    screen === 'brawlStars' ||
     screen === 'players' ||
     screen === 'playerDetail'
   )

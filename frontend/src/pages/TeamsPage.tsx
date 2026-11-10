@@ -16,7 +16,7 @@ import {
   listPlayers,
   listTeams,
   updateTeam,
-} from '../lib/api'
+} from '../lib/localData'
 import { cn, formatDateTime } from '../lib/format'
 import { iconButtonClass, primaryButtonClass, secondaryButtonClass } from '../lib/styles'
 import { useNotice } from '../lib/useNotice'

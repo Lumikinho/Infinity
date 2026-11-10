@@ -4,7 +4,7 @@ import type { FormEvent } from 'react'
 import { AuthShell } from '../components/AuthShell'
 import { Field } from '../components/Field'
 import { Spinner } from '../components/Spinner'
-import { login } from '../lib/api'
+import { login } from '../lib/localData'
 import { errorBannerClass, fieldClass, primaryButtonClass } from '../lib/styles'
 import type { User } from '../types'
 
@@ -106,6 +106,16 @@ export function LoginPage({ onAuthenticated }: LoginPageProps) {
           {submitting && <Spinner />}
           {submitting ? 'Entrando' : 'Entrar'}
         </button>
+
+        <div className="border border-line bg-neutral-50 px-3 py-2.5 text-[11px] leading-relaxed text-muted">
+          <p className="font-medium uppercase tracking-[0.1em] text-ink">Acesso de demonstração</p>
+          <p className="mt-1">
+            Painel: <span className="text-ink">admin@infinity.gg</span> / admin123
+          </p>
+          <p>
+            Jogador: <span className="text-ink">player@infinity.gg</span> / player123
+          </p>
+        </div>
       </form>
     </AuthShell>
   )

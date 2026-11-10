@@ -1,7 +1,7 @@
 import { Avatar } from './Avatar'
 import { PlayerPortrait } from './PlayerPortrait'
 import { TeamLogo } from './TeamLogo'
-import { imageUrl } from '../lib/api'
+import { imageUrl } from '../lib/localData'
 import { cn } from '../lib/format'
 import { playerHref } from '../lib/routes'
 import type { Player } from '../types'

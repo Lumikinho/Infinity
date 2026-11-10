@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 
 import { GameCard } from '../components/GameCard'
 import { LoadError } from '../components/LoadError'
-import { listGames } from '../lib/api'
+import { listGames } from '../lib/localData'
 import { fieldClass } from '../lib/styles'
 import type { Game } from '../types'
 

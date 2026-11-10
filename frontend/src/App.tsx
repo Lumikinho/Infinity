@@ -5,6 +5,7 @@ import { PublicShell } from './components/PublicShell'
 import { clearSession, readSession, writeSession } from './lib/session'
 import { isPublicScreen, readRoute, routeHash } from './lib/routes'
 import type { AppRoute } from './lib/routes'
+import { BrawlStarsPage } from './pages/BrawlStarsPage'
 import { ChampionshipsPage } from './pages/ChampionshipsPage'
 import { GamePage } from './pages/GamePage'
 import { GamesPage } from './pages/GamesPage'
@@ -85,6 +86,7 @@ function App() {
       <PublicShell current={current.screen} user={sessionUser}>
         {current.screen === 'home' && <HomePage />}
         {current.screen === 'games' && <PublicGamesPage />}
+        {current.screen === 'brawlStars' && <BrawlStarsPage />}
         {current.screen === 'gameDetail' && current.id && (
           <GamePage identifier={current.id} />
         )}

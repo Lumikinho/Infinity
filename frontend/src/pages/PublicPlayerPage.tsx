@@ -4,7 +4,7 @@ import { Avatar } from '../components/Avatar'
 import { ChampionshipBoard } from '../components/ChampionshipBoard'
 import { LoadError } from '../components/LoadError'
 import { TeamLogo } from '../components/TeamLogo'
-import { ApiError, getPlayer, imageUrl, listPlayerChampionships } from '../lib/api'
+import { DataError, getPlayer, imageUrl, listPlayerChampionships } from '../lib/localData'
 import { formatDate } from '../lib/format'
 import { gameHref, screenHashes } from '../lib/routes'
 import { secondaryButtonClass } from '../lib/styles'
@@ -44,7 +44,7 @@ export function PublicPlayerPage({ playerId }: PublicPlayerPageProps) {
       } catch (cause) {
         if (!active) return
 
-        setNotFound(cause instanceof ApiError && cause.status === 404)
+        setNotFound(cause instanceof DataError && cause.code === 404)
         setError(cause instanceof Error ? cause.message : 'Erro ao carregar o jogador.')
         setLoadState('error')
       }

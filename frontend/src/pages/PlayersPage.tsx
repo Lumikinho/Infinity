@@ -15,7 +15,7 @@ import {
   listPlayers,
   listUsers,
   updatePlayer,
-} from '../lib/api'
+} from '../lib/localData'
 import { cn, formatDateTime, roleLabels } from '../lib/format'
 import { iconButtonClass, primaryButtonClass, secondaryButtonClass } from '../lib/styles'
 import { useNotice } from '../lib/useNotice'
